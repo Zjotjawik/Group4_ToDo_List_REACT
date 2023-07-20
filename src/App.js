@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
+import TrashcanIcon from "./components/TrashcanIcon";
+import PenIcon from "./components/PenIcon";
 
 function App() {
   // State Hook - `useState`
@@ -71,31 +73,37 @@ function App() {
       />
 
       {/* Add (button) */}
-      <button onClick={() => addItem()}>Add</button>
+      <button className="add-button" onClick={() => addItem()}>Add</button>
 
       {/* 3. List of todos (unordered list) */}
-      <ul>
+      <ul className="tasklist-container">
         {items.map((item) => {
           return (
             <div>
-              <li key={item.id} onClick={() => setShowEdit(item.id)}>
+              <li key={item.id}>
                 {item.value}
-                <button
-                  className="delete-button"
-                  onClick={() => deleteItem(item.id)}
-                >
-                  ❌
-                </button>
+                <div className="icon-container">
+                  <button
+                    className="button-icon"
+                    onClick={() => deleteItem(item.id)}
+                  >
+                    <TrashcanIcon />
+                  </button>
+                  <button onClick={() => setShowEdit(item.id)}
+                    className="button-icon">
+                    <PenIcon />
+                  </button>
+                </div>
               </li>
 
               {showEdit == item.id ? (
                 <div>
                   <input
                     type="text"
-                    value={updatedText}
+                    placeholder="edit item"
                     onChange={(e) => setUpdatedText(e.target.value)}
                   />
-                  <button onClick={() => editItem(item.id, updatedText)}>
+                  <button className="update-button" onClick={() => editItem(item.id, updatedText)}>
                     Update
                   </button>
                 </div>
