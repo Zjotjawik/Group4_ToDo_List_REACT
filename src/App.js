@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import "./App.css";
 import TrashcanIcon from "./components/TrashcanIcon";
 import PenIcon from "./components/PenIcon";
+import UncheckedIcon from "./components/UncheckedIcon";
+import CheckedIcon from "./components/CheckedIcon";
 
 function App() {
   // State Hook - `useState`
+  const [isIconClicked, setIsIconClicked] = useState(false);
+  const [textDeco, setTextDeco] = useState("");
+
   const [newItem, setNewItem] = useState("");
   const [items, setItems] = useState([]);
 
@@ -12,6 +17,18 @@ function App() {
   const [updatedText, setUpdatedText] = useState("");
 
   // Helper Functions
+
+
+  function changeIcon (e) {
+    setIsIconClicked(!isIconClicked);
+    if(textDeco ===  "") {
+      setTextDeco("line-through");
+    }
+    else {
+      setTextDeco("");
+    }
+
+  }
 
   /* Adds a new item to the list array*/
   function addItem() {
@@ -23,7 +40,7 @@ function App() {
 
     const item = {
       id: Math.floor(Math.random() * 1000),
-      value: newItem,
+      value: newItem
     };
 
     // Add new item to items array
@@ -47,7 +64,7 @@ function App() {
     // Create a new item with same id
     const newItem = {
       id: currentItem.id,
-      value: newText,
+      value: newText
     };
 
     deleteItem(id);
@@ -56,6 +73,10 @@ function App() {
     setItems((oldList) => [...oldList, newItem]);
     setUpdatedText("");
     setShowEdit(-1);
+  }
+
+  function changeDone() {
+    
   }
 
   // Main part of app
@@ -80,9 +101,12 @@ function App() {
         {items.map((item) => {
           return (
             <div>
-              <li key={item.id}>
+              <li key={item.id} style={{ textDecoration: textDeco }}> 
                 {item.value}
                 <div className="icon-container">
+                  <button className="button-icon" onClick={(e) => changeIcon(e)}>
+                 {isIconClicked ? <CheckedIcon /> : <UncheckedIcon />} 
+                  </button>
                   <button
                     className="button-icon"
                     onClick={() => deleteItem(item.id)}
