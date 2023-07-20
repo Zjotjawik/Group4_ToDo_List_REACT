@@ -17,8 +17,6 @@ function App() {
   const [updatedText, setUpdatedText] = useState("");
 
   // Helper Functions
-
-
   function changeIcon (e) {
     setIsIconClicked(!isIconClicked);
     if(textDeco ===  "") {
@@ -33,18 +31,25 @@ function App() {
   /* Adds a new item to the list array*/
   function addItem() {
     // ! Check for empty item
-    if (!newItem) {
-      alert("Press enter an item.");
+    if (newItem == "") {
+      alert("You need to write something.");
       return;
     }
 
+    // CREATE A PAYLOAD
     const item = {
       id: Math.floor(Math.random() * 1000),
-      value: newItem
+      value: newItem,
+      done: false
     };
 
+    const payload = [...items, item]
+
     // Add new item to items array
-    setItems((oldList) => [...oldList, item]);
+    setItems(payload);
+
+    // STORE IN LOCALHOST
+    localStorageFunk(payload)
 
     // Reset newItem back to original state
     setNewItem("");
@@ -54,38 +59,52 @@ function App() {
   function deleteItem(id) {
     const newArray = items.filter((item) => item.id !== id);
     setItems(newArray);
+    localStorageFunk(newArray)
   }
 
   /* Edit an item text after creating it. */
-  function editItem(id, newText) {
+  function editItem(e, newText) {
+    const id = Number(e.target.id)
     // Get the current item
     const currentItem = items.filter((item) => item.id === id);
-
+    
     // Create a new item with same id
     const newItem = {
       id: currentItem.id,
-      value: newText
+      value: newText,
+      done: currentItem.done
     };
 
-    deleteItem(id);
+    const newItems = items.filter((item) => item.id !== id);
+    const payload = [...newItems, newItem]
 
     // Replace item in the item list
-    setItems((oldList) => [...oldList, newItem]);
+    setItems(payload);
+    localStorageFunk(payload)
     setUpdatedText("");
     setShowEdit(-1);
   }
 
-    // Local Storage
-    useEffect(() => {
-      localStorage.setItem('items', JSON.stringify(items));
-    }, [items]);
-  
-  
-    useEffect(() => {
-      const items = JSON.parse(localStorage.getItem('items'));
-      if (items) {
-       setItems(items);
+  /* Edit STATUS. */
+  const editSatusItem = (id) => {
+    let payload = items.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, done: !todo.done };
+      } else {
+        return { ...todo };
       }
+    })
+    console.log(payload);
+    setItems(payload);
+    localStorageFunk(payload);
+  };
+
+    // Local Storage
+    const localStorageFunk = (payload) => localStorage.setItem('items', JSON.stringify(payload));
+  
+    useEffect(() => {
+      const items = JSON.parse(localStorage.getItem('items')) ?? [];
+      setItems(items);
     }, []);
 
 
@@ -104,7 +123,7 @@ function App() {
       />
 
       {/* Add (button) */}
-      <button className="add-button" onClick={() => addItem()}>Add</button>
+      <button className="add-button" onClick={addItem}>Add</button>
 
       {/* 3. List of todos (unordered list) */}
       <ul className="tasklist-container">
@@ -114,8 +133,8 @@ function App() {
               <li key={item.id} style={{ textDecoration: textDeco }}> 
                 {item.value}
                 <div className="icon-container">
-                  <button className="button-icon" onClick={(e) => changeIcon(e)}>
-                 {isIconClicked ? <CheckedIcon /> : <UncheckedIcon />} 
+                  <button id={item.id} className="button-icon" onClick={()=>{editSatusItem(item.id)}}>
+                 {item.done ? <CheckedIcon /> : <UncheckedIcon />} 
                   </button>
                   <button
                     className="button-icon"
@@ -137,7 +156,7 @@ function App() {
                     placeholder="edit item"
                     onChange={(e) => setUpdatedText(e.target.value)}
                   />
-                  <button className="update-button" onClick={() => editItem(item.id, updatedText)}>
+                  <button id={item.id} className="update-button" onClick={(e)=>{editItem(e, updatedText)}}>
                     Update
                   </button>
                 </div>
