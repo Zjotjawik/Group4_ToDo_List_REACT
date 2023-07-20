@@ -75,6 +75,19 @@ function App() {
     setShowEdit(-1);
   }
 
+    // Local Storage
+    useEffect(() => {
+      localStorage.setItem('items', JSON.stringify(items));
+    }, [items]);
+  
+  
+    useEffect(() => {
+      const items = JSON.parse(localStorage.getItem('items'));
+      if (items) {
+       setItems(items);
+      }
+    }, []);
+
 
   // Main part of app
   return (
