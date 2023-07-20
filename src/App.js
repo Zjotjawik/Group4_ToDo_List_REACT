@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import TrashcanIcon from "./components/TrashcanIcon";
 import PenIcon from "./components/PenIcon";
@@ -58,6 +58,20 @@ function App() {
     setShowEdit(-1);
   }
 
+  // Local Storage
+  useEffect(() => {
+    localStorage.setItem('items', JSON.stringify(items));
+  }, [items]);
+
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem('items'));
+    if (items) {
+     setItems(items);
+    }
+  }, []);
+
+
   // Main part of app
   return (
     <div className="app">
@@ -96,7 +110,7 @@ function App() {
                 </div>
               </li>
 
-              {showEdit == item.id ? (
+              {showEdit === item.id ? (
                 <div>
                   <input
                     type="text"
@@ -114,6 +128,8 @@ function App() {
       </ul>
     </div>
   );
+
+
 }
 
 export default App;
