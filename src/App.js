@@ -63,27 +63,42 @@ function App() {
   }
 
   /* Edit an item text after creating it. */
-  function editItem(e, newText) {
-    const id = Number(e.target.id)
-    // Get the current item
-    const currentItem = items.filter((item) => item.id === id);
+  // function editItem(e, newText) {
+  //   const id = Number(e.target.id)
+  //   // Get the current item
+  //   const currentItem = items.filter((item) => item.id === id);
     
-    // Create a new item with same id
-    const newItem = {
-      id: currentItem.id,
-      value: newText,
-      done: currentItem.done
-    };
+  //   // Create a new item with same id
+  //   const newItem = {
+  //     id: currentItem.id,
+  //     value: newText,
+  //     done: currentItem.done
+  //   };
 
-    const newItems = items.filter((item) => item.id !== id);
-    const payload = [...newItems, newItem]
+  //   const newItems = items.filter((item) => item.id !== id);
+  //   const payload = [...newItems, newItem]
 
-    // Replace item in the item list
+  //   // Replace item in the item list
+  //   setItems(payload);
+  //   localStorageFunk(payload)
+  //   setUpdatedText("");
+  //   setShowEdit(-1);
+  // }
+
+  /* Edit TEXT. */
+  const editItem = (id, newText) => {
+    let payload = items.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, value: newText };
+      } else {
+        return { ...todo };
+      }
+    })
     setItems(payload);
-    localStorageFunk(payload)
+    localStorageFunk(payload);
     setUpdatedText("");
     setShowEdit(-1);
-  }
+  };
 
   /* Edit STATUS. */
   const editSatusItem = (id) => {
@@ -94,7 +109,6 @@ function App() {
         return { ...todo };
       }
     })
-    console.log(payload);
     setItems(payload);
     localStorageFunk(payload);
   };
@@ -156,7 +170,7 @@ function App() {
                     placeholder="edit item"
                     onChange={(e) => setUpdatedText(e.target.value)}
                   />
-                  <button id={item.id} className="update-button" onClick={(e)=>{editItem(e, updatedText)}}>
+                  <button id={item.id} className="update-button" onClick={()=>{editItem(item.id, updatedText)}}>
                     Update
                   </button>
                 </div>
