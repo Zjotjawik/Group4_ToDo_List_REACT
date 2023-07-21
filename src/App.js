@@ -144,7 +144,7 @@ function App() {
         {items.map((item) => {
           return (
             <div>
-              <li key={item.id} style={{ textDecoration: textDeco }}> 
+              <li key={item.id} style={item.done ? {textDecoration: 'line-through'} : {textDecoration: 'none'}}> 
                 {item.value}
                 <div className="icon-container">
                   <button id={item.id} className="button-icon" onClick={()=>{editSatusItem(item.id)}}>
